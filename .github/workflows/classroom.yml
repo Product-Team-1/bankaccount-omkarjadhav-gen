@@ -1,0 +1,90 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: 'Deposit: valid increases balance'
+      id: deposit-valid-increases-balance
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Deposit: valid increases balance'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountDepositTest.validDepositIncreasesBalance
+        timeout: 1
+        max-score: 1
+    - name: 'Deposit: zero ignored'
+      id: deposit-zero-ignored
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Deposit: zero ignored'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountDepositTest.zeroDepositDoesNotChangeBalance
+        timeout: 1
+        max-score: 1
+    - name: 'Deposit: negative ignored'
+      id: deposit-negative-ignored
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Deposit: negative ignored'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountDepositTest.negativeDepositDoesNotChangeBalance
+        timeout: 1
+        max-score: 1
+    - name: 'Withdraw: valid reduces balance'
+      id: withdraw-valid-reduces-balance
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Withdraw: valid reduces balance'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountWithdrawTest.validWithdrawReducesBalance
+        timeout: 1
+        max-score: 1
+    - name: 'Withdraw: overdraft blocked'
+      id: withdraw-overdraft-blocked
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Withdraw: overdraft blocked'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountWithdrawTest.cannotWithdrawMoreThanBalance
+        timeout: 1
+        max-score: 1
+    - name: 'Withdraw: negative rejected'
+      id: withdraw-negative-rejected
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Withdraw: negative rejected'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountWithdrawTest.cannotWithdrawNegativeAmount
+        timeout: 1
+        max-score: 1
+    - name: 'Withdraw: zero ignored'
+      id: withdraw-zero-ignored
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: 'Withdraw: zero ignored'
+        setup-command: ''
+        command: gradle -q test --tests com.example.project.BankAccountWithdrawTest.cannotWithdrawZeroAmount
+        timeout: 1
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        DEPOSIT-VALID-INCREASES-BALANCE_RESULTS: "${{steps.deposit-valid-increases-balance.outputs.result}}"
+        DEPOSIT-ZERO-IGNORED_RESULTS: "${{steps.deposit-zero-ignored.outputs.result}}"
+        DEPOSIT-NEGATIVE-IGNORED_RESULTS: "${{steps.deposit-negative-ignored.outputs.result}}"
+        WITHDRAW-VALID-REDUCES-BALANCE_RESULTS: "${{steps.withdraw-valid-reduces-balance.outputs.result}}"
+        WITHDRAW-OVERDRAFT-BLOCKED_RESULTS: "${{steps.withdraw-overdraft-blocked.outputs.result}}"
+        WITHDRAW-NEGATIVE-REJECTED_RESULTS: "${{steps.withdraw-negative-rejected.outputs.result}}"
+        WITHDRAW-ZERO-IGNORED_RESULTS: "${{steps.withdraw-zero-ignored.outputs.result}}"
+      with:
+        runners: deposit-valid-increases-balance,deposit-zero-ignored,deposit-negative-ignored,withdraw-valid-reduces-balance,withdraw-overdraft-blocked,withdraw-negative-rejected,withdraw-zero-ignored
