@@ -16,7 +16,15 @@ public class BankAccount {
     }
 
     public void withdraw(double amount) {
-        // TODO: implement withdraw with guard clauses (no overdraft, no negative/zero withdrawals)
+        if (amount <= 0) {
+            System.out.println("Invalid withdrawal amount: " + amount);
+            return;
+        }
+        if (amount > balance) {
+            System.out.println("Insufficient funds. Current balance: " + balance);
+            return;
+        }
+        balance -= amount;
     }
 
     public double getBalance() {
