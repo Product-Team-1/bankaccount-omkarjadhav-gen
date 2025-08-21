@@ -8,7 +8,11 @@ public class BankAccount {
     }
 
     public void deposit(double amount) {
-        // TODO: implement deposit with guard clauses (no zero/negative deposits)
+        if (amount > 0) {
+            balance += amount;
+        } else {
+            System.out.println("Invalid deposit amount: " + amount);
+        }
     }
 
     public void withdraw(double amount) {
