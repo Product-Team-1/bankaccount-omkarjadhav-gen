@@ -8,11 +8,23 @@ public class BankAccount {
     }
 
     public void deposit(double amount) {
-        // TODO: implement deposit with guard clauses (no zero/negative deposits)
+        if (amount > 0) {
+            balance += amount;
+        } else {
+            System.out.println("Invalid deposit amount: " + amount);
+        }
     }
 
     public void withdraw(double amount) {
-        // TODO: implement withdraw with guard clauses (no overdraft, no negative/zero withdrawals)
+        if (amount <= 0) {
+            System.out.println("Invalid withdrawal amount: " + amount);
+            return;
+        }
+        if (amount > balance) {
+            System.out.println("Insufficient funds. Current balance: " + balance);
+            return;
+        }
+        balance -= amount;
     }
 
     public double getBalance() {
